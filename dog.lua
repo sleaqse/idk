@@ -204,7 +204,7 @@ BSection:NewToggle("Auto Telescope", "Automatically activates telescope when tri
                 local HRP = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
                 if HRP then
                     -- Teleport to the telescope
-                    HRP.CFrame = CFrame.new(6737.32, 144.011, 9794.26)
+                    HRP.CFrame = CFrame.new(1989, 415, 3406)
                     wait(0.2) -- Short delay before interacting
 
                     -- Find and activate the ProximityPrompt
