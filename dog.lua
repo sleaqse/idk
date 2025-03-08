@@ -189,6 +189,8 @@ BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue S
     end
 end)
 
+local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
 BSection:NewButton("Teleport To Meteorite", "Teleports you to the meteorite", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 if HRP then
