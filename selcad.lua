@@ -17,7 +17,7 @@ if v:IsA("ObjectValue") and v.Parent.Name == "Enemy" and v.Parent:IsA("Model") a
 end
 end
 
-ASection:NewDropdown("Teleport To Mob", "Teleports you to the mob selected once(repeatable)", Mobs, function(CurrentOption)
+BSection:NewDropdown("Teleport To Mob", "Teleports you to the mob selected once(repeatable)", Mobs, function(CurrentOption)
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 local Enemies = workspace.Enemies:GetDescendants()
    for i,v in next, Enemies do 
@@ -29,7 +29,7 @@ end)
 
 getgenv().stopautotpmobloop = false
 
-ASection:NewDropdown("Autoteleport To Mob", "Automatically teleports you to the mob selected", Mobs, function(CurrentOption)
+BSection:NewDropdown("Autoteleport To Mob", "Automatically teleports you to the mob selected", Mobs, function(CurrentOption)
 spawn(function()
     while not stopautotpmobloop and wait(0.5) do
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
