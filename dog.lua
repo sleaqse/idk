@@ -180,39 +180,29 @@ BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue S
                     if prompt:IsA("ProximityPrompt") then
                         fireproximityprompt(prompt) -- Activate the prompt
                         print("Collected a " .. v.Name .. "!")
-                        break
                     end
                 end
             end
         end
 
-        wait(1) -- Prevents excessive loop speed (adjust as needed)
+        wait(1) -- Prevents excessive loop speed
     end
 end)
 
-local autoCollectStarsEnabled = false  -- Toggle state
-local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-
-    
-
-local autoCollectStarsEnabled = false  -- Toggle state
 local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
 -- Toggle for enabling/disabling chat detection
 BSection:NewToggle("Activate Chat Detection", "Detects specific words in chat and activates telescope", function(state)
-    autoCollectStarsEnabled = state  -- Toggle ON/OFF
-
-    if autoCollectStarsEnabled then
+    if state then
         -- Listen for chat messages from all players
         game:GetService("Chat").OnMessageDoneFiltering = function(player, message)
-            if not autoCollectStarsEnabled then return end  -- If toggle is off, do nothing
-
             local msg = message:lower() -- Convert message to lowercase for case insensitivity
 
+            -- Check if the message contains any of the target words
             if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
                 if HRP then
-                    -- Teleport to the telescope
-                    HRP.CFrame = CFrame.new(6737.32, 144.011, 9794.26)
+                    -- Teleport to the new coordinates (1989, 415, 3406)
+                    HRP.CFrame = CFrame.new(1989, 415, 3406)
                     wait(0.2) -- Short delay before interacting
 
                     -- Find and activate the ProximityPrompt
