@@ -181,6 +181,7 @@ BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue S
                         if prompt:IsA("ProximityPrompt") then
                             fireproximityprompt(prompt) -- Activate the prompt
                             print("Collected a " .. v.Name .. "!")
+                        else print("no star")
                         end
                     end
                 end
