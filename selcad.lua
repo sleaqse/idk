@@ -56,20 +56,6 @@ wait(0.4)
 getgenv().stopautotpmobloop = false
 end)
 
-ASection:NewButton("GodMode", "Activates GodMode", function()
-    local Remote = game:GetService("ReplicatedStorage"):FindFirstChild("DamageNew", true)
-    local Player = game:GetService("Players").LocalPlayer
-    local OldNameCall = nil
-OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
-   local Args = {...}
-   local Self = Args[1]
-       if self == Remote and Args[1] == Player.Character then
-           return
-       end
-   return OldNameCall(self, unpack(Args))
-end)
-end)
-
 local Tp = true
 
 ASection:NewToggle("Auto OrbTP", "Teleports you to orbs automatically (portal relic)", function(State)
