@@ -191,37 +191,35 @@ end)
 
 local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
--- Toggle for enabling/disabling chat detection
-BSection:NewToggle("Activate Chat Detection", "Detects specific words in chat and activates telescope", function(state)
-    if state then
-        -- Listen for chat messages from all players
-        game:GetService("Chat").OnMessageDoneFiltering = function(player, message)
-            local msg = message:lower() -- Convert message to lowercase for case insensitivity
+local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
-            -- Check if the message contains any of the target words
-            if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
-                if HRP then
-                    -- Teleport to the new coordinates (1989, 415, 3406)
-                    HRP.CFrame = CFrame.new(1989, 415, 3406)
-                    wait(0.2) -- Short delay before interacting
+-- Listen to chat from all players in the game
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        local msg = message:lower() -- Convert message to lowercase for case insensitivity
 
-                    -- Find and activate the ProximityPrompt
-                    for _, v in ipairs(workspace:GetDescendants()) do
-                        if v:IsA("ProximityPrompt") then
-                            fireproximityprompt(v)
-                            print("Activated Telescope!")
-                            return
-                        end
+        -- Check if the message contains any of the target words
+        if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
+            if HRP then
+                -- Teleport to the new coordinates (1989, 415, 3406)
+                HRP.CFrame = CFrame.new(1989, 415, 3406)
+                wait(0.2) -- Short delay before interacting
+
+                -- Find and activate the ProximityPrompt
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        fireproximityprompt(v)
+                        print("Activated Telescope!")
+                        return
                     end
-
-                    print("No ProximityPrompt found!")
                 end
+
+                print("No ProximityPrompt found!")
             end
         end
-    else
-        print("Chat detection disabled.")
-    end
+    end)
 end)
+            
 
 BSection:NewButton("Teleport To Meteorite", "Teleports you to the meteorite", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
