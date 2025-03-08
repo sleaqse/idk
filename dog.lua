@@ -177,6 +177,63 @@ local WorkspaceD = workspace:GetDescendants()
    end
 end)
 
+BSection:NewButton("Auto Collect Star", "Teleports to a star and interacts with it", function()
+    local Player = game.Players.LocalPlayer
+    local Character = Player.Character or Player.CharacterAdded:Wait()
+    local HRP = Character:FindFirstChild("HumanoidRootPart")
+
+    for _, v in ipairs(workspace:GetDescendants()) do
+        if v.Parent.Name == "Models" and v.Name == "Star" and v.Parent.Parent.Parent == workspace then
+            -- Teleport to the Star
+            HRP.CFrame = v.CFrame + Vector3.new(0, 3, 0) -- Slightly above to avoid issues
+            wait(0.2) -- Short delay to ensure teleporting finishes
+
+            -- Search for a ProximityPrompt inside the Star
+            for _, prompt in ipairs(v:GetDescendants()) do
+                if prompt:IsA("ProximityPrompt") then
+                    fireproximityprompt(prompt) -- Activate the prompt
+                    print("Collected a Star!")
+                    return
+                end
+            end
+
+            print("Star found, but no ProximityPrompt detected!")
+            return
+        end
+    end
+
+    print("No Star found!")
+end)
+
+BSection:NewButton("Auto Collect Blue Star", "Teleports to a blue star and collects it", function()
+    local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
+    local WorkspaceD = workspace:GetDescendants()
+
+    for i,v in next, WorkspaceD do 
+        -- Check for BlueStar inside Models
+        if v.Parent.Name == "Models" and v.Name == "BlueStar" and v.Parent.Parent.Parent == workspace then
+            -- Teleport to the Blue Star
+            HRP.CFrame = v.CFrame + Vector3.new(0, 3, 0) -- Avoids getting stuck inside
+            
+            -- Wait to make sure teleport is completed
+            wait(0.2) 
+
+            -- Check if the BlueStar has a ProximityPrompt inside it
+            for _, prompt in ipairs(v:GetDescendants()) do
+                if prompt:IsA("ProximityPrompt") then
+                    fireproximityprompt(prompt) -- Activate the prompt
+                    print("Collected a Blue Star!")
+                    return
+                end
+            end
+
+            print("Blue Star found but no ProximityPrompt detected!")
+            return
+        end
+    end
+
+    print("No Blue Star found!")
+end)
 BSection:NewButton("Teleport To Meteorite", "Teleports you to the meteorite", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 if HRP then
