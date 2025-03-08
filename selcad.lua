@@ -153,6 +153,31 @@ local WorkspaceD = workspace:GetDescendants()
    end
 end)
 
+BSection:NewToggle("Auto Moon", "Teleports to the Moon Telescope and interacts", function(state)
+    if state then
+        local Player = game.Players.LocalPlayer
+        local Character = Player.Character or Player.CharacterAdded:Wait()
+        local HRP = Character:WaitForChild("HumanoidRootPart")
+
+        Player.Chatted:Connect(function(msg)
+            if string.find(msg:lower(), "moon") or string.find(msg:lower(), "spirit") or string.find(msg:lower(), "fairy") then
+                HRP.CFrame = CFrame.new(1989, 415, 3406) -- New location
+                wait(0.2)
+
+                -- Find and trigger ProximityPrompt at the telescope
+                local telescope = workspace:FindFirstChild("MoonTelescope") -- Adjust if necessary
+                if telescope then
+                    local prompt = telescope:FindFirstChildOfClass("ProximityPrompt")
+                    if prompt then
+                        fireproximityprompt(prompt)
+                        print("Interacted with Moon Telescope!")
+                    end
+                end
+            end
+        end)
+    end
+end)
+
 BSection:NewButton("Teleport To A Star", "Teleports you to a star if it exists", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 local WorkspaceD = workspace:GetDescendants()
