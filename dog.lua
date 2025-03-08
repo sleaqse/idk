@@ -189,42 +189,6 @@ BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue S
     end
 end)
 
-local autoActivateTelescopeEnabled = false  -- Toggle state
-
-BSection:NewToggle("Auto Activate Telescope", "Activates the telescope when specific words are detected in chat", function(state)
-    autoActivateTelescopeEnabled = state  -- Toggle ON/OFF
-
-    -- If toggle is ON, listen to chat messages
-    if autoActivateTelescopeEnabled then
-        game:GetService("Chat").OnMessageDoneFiltering = function(player, message)
-            local msg = message:lower() -- Convert message to lowercase for case insensitivity
-
-            -- Check if the message contains any of the target words
-            if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
-                local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if HRP then
-                    -- Teleport to the new coordinates (1989, 415, 3406)
-                    HRP.CFrame = CFrame.new(1989, 415, 3406)
-                    wait(0.2) -- Short delay before interacting
-
-                    -- Find and activate the ProximityPrompt
-                    for _, v in ipairs(workspace:GetDescendants()) do
-                        if v:IsA("ProximityPrompt") then
-                            fireproximityprompt(v)
-                            print("Activated Telescope!")
-                            return
-                        end
-                    end
-
-                    print("No ProximityPrompt found!")
-                end
-            end
-        end
-    else
-        -- If the toggle is OFF, stop listening to chat messages
-        print("Auto Activate Telescope is OFF.")
-    end
-end)           
 
 BSection:NewButton("Teleport To Meteorite", "Teleports you to the meteorite", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
