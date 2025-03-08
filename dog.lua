@@ -190,36 +190,40 @@ BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue S
     end
 end)
 
-local autoTelescopeEnabled = false -- Toggle state
-local Player = game.Players.LocalPlayer
+local autoCollectStarsEnabled = false  -- Toggle state
+local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
-BSection:NewToggle("Auto Telescope", "Automatically activates telescope when triggered", function(state)
-    autoTelescopeEnabled = state -- Enable or disable
+-- Toggle for enabling/disabling chat detection
+BSection:NewToggle("Activate Chat Detection", "Detects specific words in chat and activates telescope", function(state)
+    autoCollectStarsEnabled = state  -- Toggle ON/OFF
 
-    while autoTelescopeEnabled do
-        game:GetService("Chat").OnMessageDoneFiltering = function(player, message)
-            msg = msg:lower() -- Convert to lowercase
+    if not autoCollectStarsEnabled then
+        print("Chat detection disabled.")
+        return  -- If disabled, do nothing
+    end
 
-            if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
-                local HRP = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-                if HRP then
-                    -- Teleport to the telescope
-                    HRP.CFrame = CFrame.new(1989, 415, 3406)
-                    wait(0.2) -- Short delay before interacting
+    -- Listen for chat messages from all players
+    game:GetService("Chat").OnMessageDoneFiltering = function(player, message)
+        local msg = message:lower() -- Convert message to lowercase for case insensitivity
 
-                    -- Find and activate the ProximityPrompt
-                    for _, v in ipairs(workspace:GetDescendants()) do
-                        if v:IsA("ProximityPrompt") then
-                            fireproximityprompt(v)
-                            print("Activated Telescope!")
-                            break
-                        end
+        if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
+            if HRP then
+                -- Teleport to the telescope
+                HRP.CFrame = CFrame.new(6737.32, 144.011, 9794.26)
+                wait(0.2) -- Short delay before interacting
+
+                -- Find and activate the ProximityPrompt
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        fireproximityprompt(v)
+                        print("Activated Telescope!")
+                        return
                     end
                 end
-            end
-        end)
 
-        wait(1) -- Prevents excessive CPU usage
+                print("No ProximityPrompt found!")
+            end
+        end
     end
 end)
 
