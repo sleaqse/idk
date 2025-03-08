@@ -197,7 +197,7 @@ BSection:NewToggle("Auto Telescope", "Automatically activates telescope when tri
     autoTelescopeEnabled = state -- Enable or disable
 
     while autoTelescopeEnabled do
-        Player.Chatted:Connect(function(msg)
+        game:GetService("Chat").OnMessageDoneFiltering = function(player, message)
             msg = msg:lower() -- Convert to lowercase
 
             if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
