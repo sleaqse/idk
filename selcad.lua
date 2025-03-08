@@ -176,7 +176,6 @@ local WorkspaceD = workspace:GetDescendants()
       end
    end
 end)
-
 BSection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with it", function()
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -196,7 +195,6 @@ BSection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with 
         end
     end
 end)
-
 BSection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and collects it", function()
     local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
     local WorkspaceD = workspace:GetDescendants()
@@ -218,27 +216,6 @@ BSection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and colle
                     return
                 end
             end
-
-BSection:NewToggle("Auto Moon", "Teleports to the Moon Telescope and interacts", function(state)
-    if state then
-        local Player = game.Players.LocalPlayer
-        local Character = Player.Character or Player.CharacterAdded:Wait()
-        local HRP = Character:WaitForChild("HumanoidRootPart")
-
-        for _, v in ipairs(workspace:GetDescendants()) do
-            if v:IsA("ProximityPrompt") and v.Parent and v.Parent.Name == "MoonTelescope" then
-                -- Teleport to the telescope
-                HRP.CFrame = v.Parent.CFrame + Vector3.new(0, 3, 0) -- Move slightly above to avoid getting stuck
-                wait(0.2)
-
-                -- Interact with the telescope
-                fireproximityprompt(v)
-                print("Interacted with Moon Telescope!")
-                break -- Stops after finding the first telescope
-            end
-        end
-    end
-end)
 
 BSection:NewButton("Teleport To Meteorite", "Teleports you to the meteorite", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
