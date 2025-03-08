@@ -1,7 +1,7 @@
 local Player = game:GetService("Players").LocalPlayer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("Luna's GUI | I SUPPORT LGBTQIA+ |", "GrapeTheme")
+local Window = Library.CreateLib("Luna's GUI | I love gill |", "GrapeTheme")
 
 local ATab = Window:NewTab("Autofarm")
 local ASection = ATab:NewSection("Autofarm")
@@ -177,7 +177,7 @@ local WorkspaceD = workspace:GetDescendants()
    end
 end)
 
-BSection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with it", function()
+ASection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with it", function(State)
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
     local HRP = Character:FindFirstChild("HumanoidRootPart")
@@ -205,7 +205,7 @@ BSection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with 
     print("No Star found!")
 end)
 
-BSection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and collects it", function()
+ASection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and collects it", function(State)
     local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
     local WorkspaceD = workspace:GetDescendants()
 
