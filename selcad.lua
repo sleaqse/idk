@@ -218,8 +218,39 @@ BSection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and colle
                     return
                 end
             end
+				
+BSection:NewToggle("Auto Moon", "Teleports to the Moon Telescope and interacts", function(state)
+    autoMoonEnabled = state
 
+    if autoMoonEnabled then
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HRP = Character:WaitForChild("HumanoidRootPart")
 
+        local function onChatted(msg)
+            msg = msg:lower() -- Convert message to lowercase
+            if string.find(msg, "moon") or string.find(msg, "spirit") or string.find(msg, "fairy") then
+                HRP.CFrame = CFrame.new(6737.32, 144.011, 9794.26) 
+                wait(0.2)
+			fireproximityprompt(prompt) -- Activate the telescope
+                        print("Interacted with Moon Telescope!")
+
+                    end
+                end
+            end
+        end
+
+        -- Connect chat event
+        chatConnection = LocalPlayer.Chatted:Connect(onChatted)
+    else
+        -- Disconnect event when toggle is turned off
+        if chatConnection then
+            chatConnection:Disconnect()
+            chatConnection = nil
+        end
+    end
+end)
 BSection:NewButton("Teleport To Meteorite", "Teleports you to the meteorite", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 if HRP then
