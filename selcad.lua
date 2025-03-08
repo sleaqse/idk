@@ -3,6 +3,11 @@ local Player = game:GetService("Players").LocalPlayer
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 local Window = Library.CreateLib("Luna's GUI | vote gill for treasurer |", "GrapeTheme")
 
+if gui then
+    gui.Size = UDim2.new(0.5, 0, 0.5, 0) -- Makes the GUI 50% of its original size
+    gui.Position = UDim2.new(0.25, 0, 0.25, 0) -- Centers the GUI
+end
+
 local ATab = Window:NewTab("Autofarm")
 local ASection = ATab:NewSection("Autofarm")
 
