@@ -177,7 +177,7 @@ local WorkspaceD = workspace:GetDescendants()
    end
 end)
 
-ASection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with it", function(State)
+BSection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with it", function(State)
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
     local HRP = Character:FindFirstChild("HumanoidRootPart")
@@ -205,7 +205,7 @@ ASection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with 
     print("No Star found!")
 end)
 
-ASection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and collects it", function(State)
+BSection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and collects it", function(State)
     local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
     local WorkspaceD = workspace:GetDescendants()
 
