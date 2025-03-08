@@ -157,6 +157,26 @@ end
 end)
 end)
 
+BSection:NewButton("Activate Telescope", "Teleports you to the telescope and activates the ProximityPrompt", function()
+    local Player = game.Players.LocalPlayer
+    local Character = Player.Character or Player.CharacterAdded:Wait()
+    local HRP = Character:FindFirstChild("HumanoidRootPart")
+
+    -- Teleport to the telescope coordinates
+    HRP.CFrame = CFrame.new(1989, 415, 3406)
+    wait(0.2) -- Small delay before interacting
+
+    -- Find and activate the ProximityPrompt in the workspace
+    for _, v in ipairs(workspace:GetDescendants()) do
+        if v:IsA("ProximityPrompt") then
+            fireproximityprompt(v)  -- Activate the ProximityPrompt
+            print("Activated Telescope!")
+            return
+        end
+    end
+
+    print("No ProximityPrompt found!")
+end)
 
 getgenv().stopautocollectstarsloop = false  -- Variable to control the loop
 
