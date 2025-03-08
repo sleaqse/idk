@@ -126,6 +126,39 @@ game:GetService("ReplicatedStorage"):WaitForChild("Server"):FireServer(unpack(ar
 end
 end)
 
+local autoCollectStarsEnabled = false  -- Toggle state
+
+BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue Stars", function(state)
+    autoCollectStarsEnabled = state  -- Toggle ON/OFF
+
+    while autoCollectStarsEnabled do  -- Keep looping while enabled
+        local Player = game.Players.LocalPlayer
+        local Character = Player.Character or Player.CharacterAdded:Wait()
+        local HRP = Character:FindFirstChild("HumanoidRootPart")
+        local WorkspaceD = workspace:GetDescendants()
+
+        for _, v in next, WorkspaceD do
+            if v.Parent.Name == "Models" and (v.Name == "Star" or v.Name == "BlueStar") and v.Parent.Parent.Parent == workspace then
+                -- Teleport to the Star or Blue Star
+                HRP.CFrame = v.CFrame + Vector3.new(0, 3, 0) -- Avoid getting stuck
+                
+                wait(0.2) -- Allow time for teleportation
+
+                -- Check if the object has a ProximityPrompt inside it
+                for _, prompt in ipairs(v:GetDescendants()) do
+                    if prompt:IsA("ProximityPrompt") then
+                        fireproximityprompt(prompt) -- Activate the prompt
+                        print("Collected a " .. v.Name .. "!")
+                        break
+                    end
+                end
+            end
+        end
+
+        wait(1) -- Prevents excessive loop speed (adjust as needed)
+    end
+end)
+
 ASection:NewButton("AntiAFK", "You will not get disconnected for idling", function()
 for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
    v:Disable()
