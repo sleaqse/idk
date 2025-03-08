@@ -1,7 +1,7 @@
 local Player = game:GetService("Players").LocalPlayer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("Luna's GUI | Gill is my treasurer |", "GrapeTheme")
+local Window = Library.CreateLib(" Help me | gill is my treasurer |", "GrapeTheme")
 
 local ATab = Window:NewTab("Autofarm")
 local ASection = ATab:NewSection("Autofarm")
@@ -17,7 +17,7 @@ if v:IsA("ObjectValue") and v.Parent.Name == "Enemy" and v.Parent:IsA("Model") a
 end
 end
 
-BSection:NewDropdown("Teleport To Mob", "Teleports you to the mob selected once(repeatable)", Mobs, function(CurrentOption)
+ASection:NewDropdown("Teleport To Mob", "Teleports you to the mob selected once(repeatable)", Mobs, function(CurrentOption)
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 local Enemies = workspace.Enemies:GetDescendants()
    for i,v in next, Enemies do 
@@ -29,7 +29,7 @@ end)
 
 getgenv().stopautotpmobloop = false
 
-BSection:NewDropdown("Autoteleport To Mob", "Automatically teleports you to the mob selected", Mobs, function(CurrentOption)
+ASection:NewDropdown("Autoteleport To Mob", "Automatically teleports you to the mob selected", Mobs, function(CurrentOption)
 spawn(function()
     while not stopautotpmobloop and wait(0.5) do
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
@@ -54,6 +54,20 @@ ASection:NewButton("Stop AutoMobTP", "Stops automatically teleporting to the mob
 getgenv().stopautotpmobloop = true
 wait(0.4)
 getgenv().stopautotpmobloop = false
+end)
+
+ASection:NewButton("GodMode", "Activates GodMode", function()
+    local Remote = game:GetService("ReplicatedStorage"):FindFirstChild("DamageNew", true)
+    local Player = game:GetService("Players").LocalPlayer
+    local OldNameCall = nil
+OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
+   local Args = {...}
+   local Self = Args[1]
+       if self == Remote and Args[1] == Player.Character then
+           return
+       end
+   return OldNameCall(self, unpack(Args))
+end)
 end)
 
 local Tp = true
@@ -153,31 +167,6 @@ local WorkspaceD = workspace:GetDescendants()
    end
 end)
 
-BSection:NewToggle("Auto Moon", "Teleports to the Moon Telescope and interacts", function(state)
-    if state then
-        local Player = game.Players.LocalPlayer
-        local Character = Player.Character or Player.CharacterAdded:Wait()
-        local HRP = Character:WaitForChild("HumanoidRootPart")
-
-        Player.Chatted:Connect(function(msg)
-            if string.find(msg:lower(), "moon") or string.find(msg:lower(), "spirit") or string.find(msg:lower(), "fairy") then
-                HRP.CFrame = CFrame.new(1989, 415, 3406) -- New location
-                wait(0.2)
-
-                -- Find and trigger ProximityPrompt at the telescope
-                local telescope = workspace:FindFirstChild("MoonTelescope") -- Adjust if necessary
-                if telescope then
-                    local prompt = telescope:FindFirstChildOfClass("ProximityPrompt")
-                    if prompt then
-                        fireproximityprompt(prompt)
-                        print("Interacted with Moon Telescope!")
-                    end
-                end
-            end
-        end)
-    end
-end)
-
 BSection:NewButton("Teleport To A Star", "Teleports you to a star if it exists", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 local WorkspaceD = workspace:GetDescendants()
@@ -187,7 +176,8 @@ local WorkspaceD = workspace:GetDescendants()
       end
    end
 end)
-ASection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with it", function()
+
+BSection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with it", function()
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
     local HRP = Character:FindFirstChild("HumanoidRootPart")
@@ -206,7 +196,8 @@ ASection:NewToggle("Auto Collect Star", "Teleports to a star and interacts with 
         end
     end
 end)
-ASection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and collects it", function()
+
+BSection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and collects it", function()
     local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
     local WorkspaceD = workspace:GetDescendants()
 
@@ -228,13 +219,27 @@ ASection:NewToggle("Auto Collect Blue Star", "Teleports to a blue star and colle
                 end
             end
 
-            print("Blue Star found but no ProximityPrompt detected!")
-            return
+BSection:NewToggle("Auto Moon", "Teleports to the Moon Telescope and interacts", function(state)
+    if state then
+        local Player = game.Players.LocalPlayer
+        local Character = Player.Character or Player.CharacterAdded:Wait()
+        local HRP = Character:WaitForChild("HumanoidRootPart")
+
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("ProximityPrompt") and v.Parent and v.Parent.Name == "MoonTelescope" then
+                -- Teleport to the telescope
+                HRP.CFrame = v.Parent.CFrame + Vector3.new(0, 3, 0) -- Move slightly above to avoid getting stuck
+                wait(0.2)
+
+                -- Interact with the telescope
+                fireproximityprompt(v)
+                print("Interacted with Moon Telescope!")
+                break -- Stops after finding the first telescope
+            end
         end
     end
-
-    print("No Blue Star found!")
 end)
+
 BSection:NewButton("Teleport To Meteorite", "Teleports you to the meteorite", function()
 local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
 if HRP then
