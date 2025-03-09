@@ -1,7 +1,7 @@
 local Player = game:GetService("Players").LocalPlayer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("Luna's GUI | I love gill |", "GrapeTheme")
+local Window = Library.CreateLib(" sleaqse my goat | I love gill |", "GrapeTheme")
 
 local ATab = Window:NewTab("Autofarm")
 local ASection = ATab:NewSection("Autofarm")
