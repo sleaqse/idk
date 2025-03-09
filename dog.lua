@@ -144,9 +144,6 @@ for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) d
 end
 end)
 
-print("20")
-
-
 -- Create a new tab and section
 local BMTAB = Window:NewTab("Black Market")
 local BMSection = BMTAB:NewSection("Auto Buy Items")
