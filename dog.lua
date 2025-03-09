@@ -169,6 +169,54 @@ end
 end)
 end)
 
+-- Function to handle the addition of the Black Market Dealer
+local function onBlackMarketDealerAdded(dealer)
+    if string.match(dealer.Name, 'Grani') then
+        -- Create a new section in the GUI for Black Market Items
+        local BMitems = Main:NewSection("Black Market Items")
+        
+        -- Notify the player about the Black Market Dealer's arrival
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Black Market Dealer",
+            Text = "Check the Black Market Items Section in the GUI (Scroll down to bottom).",
+        })
+        
+        -- Wait briefly before populating the items
+        wait(0.5)
+        
+        -- Iterate through the Black Market stall to find items
+        for _, item in pairs(game:GetService("Workspace").Stalls["Black Market"]:GetDescendants()) do
+            if item:IsA("NumberValue") and item.Name == "Cost" then
+                -- Add a button for each item in the Black Market section
+                BMitems:NewButton(item.Parent.Name.."("..item.Value.."g)", "", function()
+                    local args = {
+                        [1] = "Buy1",
+                        [2] = workspace.Stalls:FindFirstChild(item.Parent.Parent.Parent.Parent.Name)
+                            :FindFirstChild(item.Parent.Parent.Parent.Name).Shop:FindFirstChild(item.Parent.Name)
+                    }
+                    game:GetService("ReplicatedStorage").Remotes.Effected:FireServer(unpack(args))
+                end)
+            end
+        end
+    end
+end
+
+-- Connect the function to the ChildAdded event of the Black Market stall
+workspace.Stalls["Black Market"].ChildAdded:Connect(onBlackMarketDealerAdded)
+
+-- Function to handle the removal of the Black Market Dealer
+local function onBlackMarketDealerRemoved(dealer)
+    -- Iterate through the CoreGui to find and remove the Black Market Items section
+    for _, guiElement in pairs(game.CoreGui:GetDescendants()) do
+        if guiElement:IsA("TextLabel") and guiElement.Text == "Black Market Items" then
+            guiElement.Parent.Parent:Destroy()
+        end
+    end
+end
+
+-- Connect the function to the ChildRemoved event of the Black Market stall
+workspace.Stalls["Black Market"].ChildRemoved:Connect(onBlackMarketDealerRemoved)
+
 BSection:NewButton("Activate Telescope", "Teleports you to the telescope and activates the ProximityPrompt", function()
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
