@@ -144,42 +144,37 @@ for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) d
 end
 end)
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
 
--- Create a new tab for Black Market
 local BMTab = Window:NewTab("Black Market")
-local BMSection = BMTab:NewSection("Items for Sale")
+local BMSection = BMTab:NewSection("Black Market Items")
 
--- Function to add buttons for Black Market purchases
-local function UpdateBlackMarket()
-    local BMStall = Workspace:FindFirstChild("Stalls") and Workspace.Stalls:FindFirstChild("Black Market")
-    local BMDealer = BMStall and BMStall:FindFirstChild("Grani")
-
-    if BMStall and BMDealer then
-        for _, item in pairs(BMStall:GetDescendants()) do
-            if item:IsA("NumberValue") and item.Name == "Cost" then
-                local itemName = item.Parent.Name
-                local itemCost = item.Value
-
-                -- Create a button to buy the item
-                BMSection:NewButton(itemName .. " (" .. itemCost .. "g)", "Buy " .. itemName, function()
-                    local args = {
-                        [1] = "Buy1",
-                        [2] = BMStall.Shop:FindFirstChild(itemName)
-                    }
-                    ReplicatedStorage.Remotes.Effected:FireServer(unpack(args))
-                    print("Purchased: " .. itemName)
-                end)
-            end
-        end
-    else
-        BMSection:NewLabel("Black Market not available")
-    end
+-- Function to check if the Black Market is available
+local function isBlackMarketAvailable()
+    local market = workspace:FindFirstChild("BlackMarket")
+    return market and market:FindFirstChild("Items")
 end
 
--- Call function to add Black Market buttons
-UpdateBlackMarket()
+-- Function to buy an item
+local function buyItem(itemName)
+    local args = {
+        [1] = itemName
+    }
+    game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+end
+
+-- Auto-buy loop
+spawn(function()
+    while true do
+        if isBlackMarketAvailable() then
+            local items = workspace.BlackMarket.Items:GetChildren()
+            for _, item in pairs(items) do
+                buyItem(item.Name) -- Auto-buy each item
+                wait(1) -- Small delay to prevent overload
+            end
+        end
+        wait(5) -- Check every 5 seconds
+    end
+end)
 
 local BTab = Window:NewTab("Fruits/Trees/Pickups")
 local BSection = BTab:NewSection("Fruits/Trees/Pickups")
