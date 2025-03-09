@@ -144,9 +144,6 @@ for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) d
 end
 end)
 
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/xyz123"))() -- Replace with actual GUI library
-local Window = Library.CreateLib("Black Market Auto-Buy", "DarkTheme")
-
 -- Create a new tab and section
 local BMTAB = Window:NewTab("Black Market")
 local BMSection = BMTAB:NewSection("Auto Buy Items")
