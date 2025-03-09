@@ -147,39 +147,52 @@ end)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+
 -- Create a new tab for Black Market
 local BMTab = Window:NewTab("Black Market")
-local BMSection = BMTab:NewSection("Items for Sale")
+local BMSection = BMTab:NewSection("Auto Buy")
 
--- Function to add buttons for Black Market purchases
-local function UpdateBlackMarket()
-    local BMStall = Workspace:FindFirstChild("Stalls") and Workspace.Stalls:FindFirstChild("Black Market")
-    local BMDealer = BMStall and BMStall:FindFirstChild("Grani")
+-- Toggle for auto-buy
+local AutoBuyEnabled = false
 
-    if BMStall and BMDealer then
-        for _, item in pairs(BMStall:GetDescendants()) do
-            if item:IsA("NumberValue") and item.Name == "Cost" then
-                local itemName = item.Parent.Name
-                local itemCost = item.Value
+BMSection:NewToggle("Auto Buy Items", "Automatically buys Black Market items when available", function(state)
+    AutoBuyEnabled = state
+end)
 
-                -- Create a button to buy the item
-                BMSection:NewButton(itemName .. " (" .. itemCost .. "g)", "Buy " .. itemName, function()
-                    local args = {
-                        [1] = "Buy1",
-                        [2] = BMStall.Shop:FindFirstChild(itemName)
-                    }
-                    ReplicatedStorage.Remotes.Effected:FireServer(unpack(args))
-                    print("Purchased: " .. itemName)
-                end)
+-- Function to auto-buy Black Market items
+local function AutoBuyBlackMarket()
+    while true do
+        if AutoBuyEnabled then
+            local BMStall = Workspace:FindFirstChild("Stalls") and Workspace.Stalls:FindFirstChild("Black Market")
+            local BMDealer = BMStall and BMStall:FindFirstChild("Grani")
+
+            if BMStall and BMDealer then
+                for _, item in pairs(BMStall:GetDescendants()) do
+                    if item:IsA("NumberValue") and item.Name == "Cost" then
+                        local itemName = item.Parent.Name
+                        local itemInstance = BMStall.Shop:FindFirstChild(itemName)
+
+                        if itemInstance then
+                            local args = {
+                                [1] = "Buy1",
+                                [2] = itemInstance
+                            }
+                            ReplicatedStorage.Remotes.Effected:FireServer(unpack(args))
+                            print("Auto Purchased: " .. itemName)
+                        end
+                    end
+                end
             end
         end
-    else
-        BMSection:NewLabel("Black Market not available")
+        wait(5) -- Adjust time interval to prevent lag (checks every 5 seconds)
     end
 end
 
--- Call function to add Black Market buttons
-UpdateBlackMarket()
+-- Run auto-buy function in a separate thread
+spawn(AutoBuyBlackMarket)
 
 local BTab = Window:NewTab("Fruits/Trees/Pickups")
 local BSection = BTab:NewSection("Fruits/Trees/Pickups")
