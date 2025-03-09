@@ -100,7 +100,7 @@ local Acts = true
 ASection:NewToggle("Spam All Actives", "Spams all Actives", function(State)
 Acts = State
 
-while Acts and wait(6.3) do
+while Acts and wait() do
 local args = {
 [1] = "UseItem",
 [2] = 1,
