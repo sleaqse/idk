@@ -169,25 +169,38 @@ end
 end)
 end)
 
--- Function to handle the addition of the Black Market Dealer
+-- ✅ Wait until GUI is fully loaded
+repeat wait() until Main 
+
+-- ✅ Check if Black Market exists in the game before running
+if not workspace:FindFirstChild("Stalls") or not workspace.Stalls:FindFirstChild("Black Market") then
+    warn("Black Market not found in workspace. BM script skipped.")
+    return
+end
+
+-- ✅ Function to handle when the Black Market Dealer spawns
 local function onBlackMarketDealerAdded(dealer)
     if string.match(dealer.Name, 'Grani') then
-        -- Create a new section in the GUI for Black Market Items
+        -- Remove any old Black Market section to prevent duplication
+        for _, v in pairs(game.CoreGui:GetDescendants()) do
+            if v:IsA("TextLabel") and v.Text == "Black Market Items" then
+                v.Parent.Parent:Destroy()
+            end
+        end
+
+        -- ✅ Create a new section in the GUI for Black Market Items
         local BMitems = Main:NewSection("Black Market Items")
         
-        -- Notify the player about the Black Market Dealer's arrival
+        -- ✅ Notify the player
         game:GetService("StarterGui"):SetCore("SendNotification", {
             Title = "Black Market Dealer",
             Text = "Check the Black Market Items Section in the GUI (Scroll down to bottom).",
         })
-        
-        -- Wait briefly before populating the items
+
+        -- ✅ Add buttons for Black Market items
         wait(0.5)
-        
-        -- Iterate through the Black Market stall to find items
-        for _, item in pairs(game:GetService("Workspace").Stalls["Black Market"]:GetDescendants()) do
+        for _, item in pairs(workspace.Stalls["Black Market"]:GetDescendants()) do
             if item:IsA("NumberValue") and item.Name == "Cost" then
-                -- Add a button for each item in the Black Market section
                 BMitems:NewButton(item.Parent.Name.."("..item.Value.."g)", "", function()
                     local args = {
                         [1] = "Buy1",
@@ -201,22 +214,20 @@ local function onBlackMarketDealerAdded(dealer)
     end
 end
 
--- Connect the function to the ChildAdded event of the Black Market stall
-workspace.Stalls["Black Market"].ChildAdded:Connect(onBlackMarketDealerAdded)
-
--- Function to handle the removal of the Black Market Dealer
-local function onBlackMarketDealerRemoved(dealer)
-    -- Iterate through the CoreGui to find and remove the Black Market Items section
-    for _, guiElement in pairs(game.CoreGui:GetDescendants()) do
-        if guiElement:IsA("TextLabel") and guiElement.Text == "Black Market Items" then
-            guiElement.Parent.Parent:Destroy()
+-- ✅ Function to remove Black Market GUI when dealer disappears
+local function onBlackMarketDealerRemoved(child)
+    if string.match(child.Name, "Grani") then -- Only remove BM UI when Grani disappears
+        for _, v in pairs(game.CoreGui:GetDescendants()) do
+            if v:IsA("TextLabel") and v.Text == "Black Market Items" then
+                v.Parent.Parent:Destroy()
+            end
         end
     end
 end
 
--- Connect the function to the ChildRemoved event of the Black Market stall
+-- ✅ Connect the functions to the Black Market's events
+workspace.Stalls["Black Market"].ChildAdded:Connect(onBlackMarketDealerAdded)
 workspace.Stalls["Black Market"].ChildRemoved:Connect(onBlackMarketDealerRemoved)
-
 BSection:NewButton("Activate Telescope", "Teleports you to the telescope and activates the ProximityPrompt", function()
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
