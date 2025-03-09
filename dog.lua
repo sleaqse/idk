@@ -144,63 +144,42 @@ for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) d
 end
 end)
 
--- Create BM Tab
-local BMTab = Window:NewTab("Black Market") -- Creates a new tab for BM
-local BMSection = BMTab:NewSection("Black Market Items") -- Creates a section within the BM tab
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
 
--- Table to store available BM items
-local BMItems = {}
+-- Create a new tab for Black Market
+local BMTab = Window:NewTab("Black Market")
+local BMSection = BMTab:NewSection("Items for Sale")
 
--- Fetch BM Items from the game (Modify this logic based on actual BM item locations)
-for i, v in pairs(workspace.BlackMarket:GetChildren()) do
-    if v:IsA("Model") and not table.find(BMItems, v.Name) then
-        table.insert(BMItems, v.Name)
-    end
-end
+-- Function to add buttons for Black Market purchases
+local function UpdateBlackMarket()
+    local BMStall = Workspace:FindFirstChild("Stalls") and Workspace.Stalls:FindFirstChild("Black Market")
+    local BMDealer = BMStall and BMStall:FindFirstChild("Grani")
 
--- Dropdown to manually teleport to BM items
-BMSection:NewDropdown("Teleport to BM Item", "Teleports you to the selected BM item", BMItems, function(CurrentOption)
-    local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
-    for i, v in pairs(workspace.BlackMarket:GetChildren()) do
-        if v:IsA("Model") and v.Name == CurrentOption then
-            HRP.CFrame = v:GetPivot()
-            break
-        end
-    end
-end)
+    if BMStall and BMDealer then
+        for _, item in pairs(BMStall:GetDescendants()) do
+            if item:IsA("NumberValue") and item.Name == "Cost" then
+                local itemName = item.Parent.Name
+                local itemCost = item.Value
 
--- Global variable for Auto-Buy BM
-getgenv().autoBuyBM = false
-
--- Toggle to Auto-Buy BM items
-BMSection:NewToggle("Auto Buy BM Items", "Automatically buys BM items when available", function(state)
-    getgenv().autoBuyBM = state
-    if state then
-        print("Auto BM Buying Enabled")
-        while getgenv().autoBuyBM and task.wait(1) do
-            for i, v in pairs(workspace.BlackMarket:GetChildren()) do
-                if v:IsA("Model") and v:FindFirstChild("BuyButton") then
-                    fireclickdetector(v.BuyButton.ClickDetector) -- Simulates clicking the buy button
-                end
+                -- Create a button to buy the item
+                BMSection:NewButton(itemName .. " (" .. itemCost .. "g)", "Buy " .. itemName, function()
+                    local args = {
+                        [1] = "Buy1",
+                        [2] = BMStall.Shop:FindFirstChild(itemName)
+                    }
+                    ReplicatedStorage.Remotes.Effected:FireServer(unpack(args))
+                    print("Purchased: " .. itemName)
+                end)
             end
         end
     else
-        print("Auto BM Buying Disabled")
+        BMSection:NewLabel("Black Market not available")
     end
-end)
+end
 
--- Toggle to detect if BM has spawned
-BMSection:NewToggle("Detect BM Spawns", "Alerts you when BM items spawn", function(state)
-    getgenv().detectBM = state
-    while getgenv().detectBM and task.wait(1) do
-        for i, v in pairs(workspace.BlackMarket:GetChildren()) do
-            if v:IsA("Model") and not table.find(BMItems, v.Name) then
-                table.insert(BMItems, v.Name)
-                print("New Black Market Item Detected: " .. v.Name)
-            end
-        end
-    end
-end)
+-- Call function to add Black Market buttons
+UpdateBlackMarket()
 
 local BTab = Window:NewTab("Fruits/Trees/Pickups")
 local BSection = BTab:NewSection("Fruits/Trees/Pickups")
