@@ -162,6 +162,9 @@ BSection:NewButton("Activate Telescope", "Teleports you to the telescope and act
     local Character = Player.Character or Player.CharacterAdded:Wait()
     local HRP = Character:FindFirstChild("HumanoidRootPart")
 
+   getgenv().stopautotpmobloop = true
+   wait(0.4)
+   getgenv().stopautotpmobloop = false
     -- Teleport to the telescope coordinates
     HRP.CFrame = CFrame.new(1989, 415, 3406)
     wait(0.2) -- Small delay before interacting
