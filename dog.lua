@@ -221,6 +221,7 @@ spawn(function()
         wait(3)
     end
 end)
+
 local BTab = Window:NewTab("Fruits/Trees/Pickups")
 local BSection = BTab:NewSection("Fruits/Trees/Pickups")
 
