@@ -148,6 +148,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
 
+print("Creating Black Market Tab...")
+local BMTab = Window:NewTab("Black Market")
+if BMTab then
+    print("Black Market Tab created successfully!")
+else
+    print("Failed to create Black Market Tab")
+end
+
 -- Ensure the UI library is loaded
 if not Window then
     warn("UI Library not initialized! Make sure 'Window' is defined before running this script.")
