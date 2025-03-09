@@ -144,62 +144,6 @@ for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) d
 end
 end)
 
--- Create a new tab and section
-local BMTAB = Window:NewTab("Black Market")
-local BMSection = BMTAB:NewSection("Auto Buy Items")
-
--- Status display for BM availability
-local BMStatus = BMSection:NewLabel("Checking Black Market Status...")
-local ItemsForSale = BMSection:NewLabel("Items: None")
-
--- Function to check if the Black Market has spawned
-local function isBlackMarketAvailable()
-    local BM = workspace:FindFirstChild("BlackMarket")
-    return BM and BM:FindFirstChild("Items")
-end
-
-print("21")
-
--- Function to purchase an item
-local function buyItem(itemName)
-    local args = {
-        [1] = itemName
-    }
-    game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
-end
-
--- Auto-buy feature (always on)
-_G.AutoBuyBM = true
-spawn(function()
-    while _G.AutoBuyBM do
-        if isBlackMarketAvailable() then
-            local items = {}
-            for _, item in pairs(workspace.BlackMarket.Items:GetChildren()) do
-                buyItem(item.Name) -- Buys all available items
-                table.insert(items, item.Name) -- Store item names for display
-                wait(1) -- Delay to prevent spam
-            end
-            ItemsForSale:UpdateLabel("Items: " .. table.concat(items, ", "))
-        else
-            ItemsForSale:UpdateLabel("Items: None")
-        end
-        wait(5) -- Check every 5 seconds
-    end
-end)
-
--- Update BM status display
-spawn(function()
-    while true do
-        if isBlackMarketAvailable() then
-            BMStatus:UpdateLabel("Black Market is Available!")
-        else
-            BMStatus:UpdateLabel("Black Market Not Available")
-            ItemsForSale:UpdateLabel("Items: None") -- Clear items when BM is gone
-        end
-        wait(3)
-    end
-end)
-
 local BTab = Window:NewTab("Fruits/Trees/Pickups")
 local BSection = BTab:NewSection("Fruits/Trees/Pickups")
 
