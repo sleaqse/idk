@@ -155,7 +155,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
 
--- Ensure the UI library is already loaded
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+
+-- Ensure the UI library is loaded
 if not Window then
     warn("UI Library not initialized! Make sure 'Window' is defined before running this script.")
     return
@@ -165,8 +169,11 @@ end
 local BMTab = Window:NewTab("Black Market")
 local BMSection = BMTab:NewSection("Auto Buy")
 
--- Toggle state
+-- Auto-buy toggle state
 local AutoBuyEnabled = false
+
+-- Create a UI label to show Black Market status
+local BMStatusLabel = BMSection:NewLabel("Black Market Status: Checking...")
 
 -- Create a toggle in the Black Market section
 BMSection:NewToggle("Auto Buy Items", "Automatically buys Black Market items when available", function(state)
@@ -174,14 +181,21 @@ BMSection:NewToggle("Auto Buy Items", "Automatically buys Black Market items whe
     print("Auto Buy is now " .. (state and "Enabled" or "Disabled"))
 end)
 
+-- Function to check Black Market availability
+local function IsBlackMarketAvailable()
+    local BMStall = Workspace:FindFirstChild("Stalls") and Workspace.Stalls:FindFirstChild("Black Market")
+    local BMDealer = BMStall and BMStall:FindFirstChild("Grani")
+    return BMStall and BMDealer
+end
+
 -- Function to auto-buy Black Market items
 local function AutoBuyBlackMarket()
     while true do
         if AutoBuyEnabled then
-            local BMStall = Workspace:FindFirstChild("Stalls") and Workspace.Stalls:FindFirstChild("Black Market")
-            local BMDealer = BMStall and BMStall:FindFirstChild("Grani")
-
-            if BMStall and BMDealer then
+            if IsBlackMarketAvailable() then
+                BMStatusLabel:UpdateLabel("Black Market Status: Available ✅")
+                
+                local BMStall = Workspace.Stalls["Black Market"]
                 for _, item in pairs(BMStall:GetDescendants()) do
                     if item:IsA("NumberValue") and item.Name == "Cost" then
                         local itemName = item.Parent.Name
@@ -197,9 +211,11 @@ local function AutoBuyBlackMarket()
                         end
                     end
                 end
+            else
+                BMStatusLabel:UpdateLabel("Black Market Status: Not Available ❌")
             end
         end
-        wait(5) -- Adjust time interval to prevent lag (checks every 5 seconds)
+        wait(5) -- Adjust time interval to prevent lag
     end
 end
 
