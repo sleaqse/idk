@@ -180,7 +180,7 @@ end)
 
 local autoCollectStarsEnabled = false  -- Toggle state
 
-BSection:NewButton("Auto Collect Stars", "Continuously collects Stars and Blue Stars", function(state)
+BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue Stars", function(state)
     autoCollectStarsEnabled = state  -- Toggle ON/OFF
 
     while autoCollectStarsEnabled do  -- Keep looping while enabled
