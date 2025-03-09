@@ -165,63 +165,62 @@ if not Window then
     return
 end
 
--- Create a new Black Market tab & section
-local BMTab = Window:NewTab("Black Market")
-local BMSection = BMTab:NewSection("Auto Buy")
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/xyz123"))() -- Replace with actual GUI library
+local Window = Library.CreateLib("Black Market Auto-Buy", "DarkTheme")
 
--- Auto-buy toggle state
-local AutoBuyEnabled = false
+-- Create a new tab and section
+local BMTAB = Window:NewTab("Black Market")
+local BMSection = BMTAB:NewSection("Auto Buy Items")
 
--- Create a UI label to show Black Market status
-local BMStatusLabel = BMSection:NewLabel("Black Market Status: Checking...")
+-- Status display for BM availability
+local BMStatus = BMSection:NewLabel("Checking Black Market Status...")
+local ItemsForSale = BMSection:NewLabel("Items: None")
 
--- Create a toggle in the Black Market section
-BMSection:NewToggle("Auto Buy Items", "Automatically buys Black Market items when available", function(state)
-    AutoBuyEnabled = state
-    print("Auto Buy is now " .. (state and "Enabled" or "Disabled"))
+-- Function to check if the Black Market has spawned
+local function isBlackMarketAvailable()
+    local BM = workspace:FindFirstChild("BlackMarket")
+    return BM and BM:FindFirstChild("Items")
+end
+
+-- Function to purchase an item
+local function buyItem(itemName)
+    local args = {
+        [1] = itemName
+    }
+    game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+end
+
+-- Auto-buy feature (always on)
+_G.AutoBuyBM = true
+spawn(function()
+    while _G.AutoBuyBM do
+        if isBlackMarketAvailable() then
+            local items = {}
+            for _, item in pairs(workspace.BlackMarket.Items:GetChildren()) do
+                buyItem(item.Name) -- Buys all available items
+                table.insert(items, item.Name) -- Store item names for display
+                wait(1) -- Delay to prevent spam
+            end
+            ItemsForSale:UpdateLabel("Items: " .. table.concat(items, ", "))
+        else
+            ItemsForSale:UpdateLabel("Items: None")
+        end
+        wait(5) -- Check every 5 seconds
+    end
 end)
 
--- Function to check Black Market availability
-local function IsBlackMarketAvailable()
-    local BMStall = Workspace:FindFirstChild("Stalls") and Workspace.Stalls:FindFirstChild("Black Market")
-    local BMDealer = BMStall and BMStall:FindFirstChild("Grani")
-    return BMStall and BMDealer
-end
-
--- Function to auto-buy Black Market items
-local function AutoBuyBlackMarket()
+-- Update BM status display
+spawn(function()
     while true do
-        if AutoBuyEnabled then
-            if IsBlackMarketAvailable() then
-                BMStatusLabel:UpdateLabel("Black Market Status: Available ✅")
-                
-                local BMStall = Workspace.Stalls["Black Market"]
-                for _, item in pairs(BMStall:GetDescendants()) do
-                    if item:IsA("NumberValue") and item.Name == "Cost" then
-                        local itemName = item.Parent.Name
-                        local itemInstance = BMStall.Shop:FindFirstChild(itemName)
-
-                        if itemInstance then
-                            local args = {
-                                [1] = "Buy1",
-                                [2] = itemInstance
-                            }
-                            ReplicatedStorage.Remotes.Effected:FireServer(unpack(args))
-                            print("✅ Auto Purchased: " .. itemName)
-                        end
-                    end
-                end
-            else
-                BMStatusLabel:UpdateLabel("Black Market Status: Not Available ❌")
-            end
+        if isBlackMarketAvailable() then
+            BMStatus:UpdateLabel("Black Market is Available!")
+        else
+            BMStatus:UpdateLabel("Black Market Not Available")
+            ItemsForSale:UpdateLabel("Items: None") -- Clear items when BM is gone
         end
-        wait(5) -- Adjust time interval to prevent lag
+        wait(3)
     end
-end
-
--- Run auto-buy function in a separate thread
-spawn(AutoBuyBlackMarket)
-
+end)
 local BTab = Window:NewTab("Fruits/Trees/Pickups")
 local BSection = BTab:NewSection("Fruits/Trees/Pickups")
 
