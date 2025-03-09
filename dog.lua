@@ -178,38 +178,36 @@ BSection:NewButton("Activate Telescope", "Teleports you to the telescope and act
     print("No ProximityPrompt found!")
 end)
 
-getgenv().stopautocollectstarsloop = false  -- Variable to control the loop
+local autoCollectStarsEnabled = false  -- Toggle state
 
 BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue Stars", function(state)
     autoCollectStarsEnabled = state  -- Toggle ON/OFF
 
-    spawn(function()
-        while not getgenv().stopautocollectstarsloop and autoCollectStarsEnabled do
-            local Player = game.Players.LocalPlayer
-            local Character = Player.Character or Player.CharacterAdded:Wait()
-            local HRP = Character:FindFirstChild("HumanoidRootPart")
-            local WorkspaceD = workspace:GetDescendants()
+    while autoCollectStarsEnabled do  -- Keep looping while enabled
+        local Player = game.Players.LocalPlayer
+        local Character = Player.Character or Player.CharacterAdded:Wait()
+        local HRP = Character:FindFirstChild("HumanoidRootPart")
+        local foundStar = false  -- Track if any star was found
 
-            for _, v in next, WorkspaceD do
-                if v.Parent.Name == "Models" and (v.Name == "Star" or v.Name == "BlueStar") and v.Parent.Parent.Parent == workspace then
-                    -- Teleport to the Star or Blue Star
-                    HRP.CFrame = v.CFrame + Vector3.new(0, 3, 0) -- Avoid getting stuck
-                    wait(0.2) -- Allow time for teleportation
-
-                    -- Check if the object has a ProximityPrompt inside it
-                    for _, prompt in ipairs(v:GetDescendants()) do
-                        if prompt:IsA("ProximityPrompt") then
-                            fireproximityprompt(prompt) -- Activate the prompt
-                            print("Collected a " .. v.Name .. "!")
-                        else print("no star")
-                        end
-                    end
+        for _, v in ipairs(workspace:GetChildren()) do -- Scan all top-level objects
+            if v:IsA("Model") and (v.Name == "Star" or v.Name == "BlueStar") then
+                local prompt = v:FindFirstChildWhichIsA("ProximityPrompt", true)
+                if prompt then
+                    HRP.CFrame = v:GetPivot() + Vector3.new(0, 3, 0) -- Teleport slightly above
+                    wait(0.5) -- Small delay before interaction
+                    fireproximityprompt(prompt) -- Collects the star
+                    print("Collected a " .. v.Name .. "!")
+                    foundStar = true
                 end
             end
-
-            wait(5) -- Prevents excessive loop speed (adjust as needed)
         end
-    end)
+
+        if not foundStar then
+            print("No Stars found! Waiting...")
+        end
+
+        wait(1) -- Prevents excessive looping and keeps checking
+    end
 end)
 
 local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
