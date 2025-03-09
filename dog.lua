@@ -151,15 +151,27 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
 
--- Create a new tab for Black Market
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+
+-- Ensure the UI library is already loaded
+if not Window then
+    warn("UI Library not initialized! Make sure 'Window' is defined before running this script.")
+    return
+end
+
+-- Create a new Black Market tab & section
 local BMTab = Window:NewTab("Black Market")
 local BMSection = BMTab:NewSection("Auto Buy")
 
--- Toggle for auto-buy
+-- Toggle state
 local AutoBuyEnabled = false
 
+-- Create a toggle in the Black Market section
 BMSection:NewToggle("Auto Buy Items", "Automatically buys Black Market items when available", function(state)
     AutoBuyEnabled = state
+    print("Auto Buy is now " .. (state and "Enabled" or "Disabled"))
 end)
 
 -- Function to auto-buy Black Market items
@@ -181,7 +193,7 @@ local function AutoBuyBlackMarket()
                                 [2] = itemInstance
                             }
                             ReplicatedStorage.Remotes.Effected:FireServer(unpack(args))
-                            print("Auto Purchased: " .. itemName)
+                            print("✅ Auto Purchased: " .. itemName)
                         end
                     end
                 end
