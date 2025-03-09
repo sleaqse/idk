@@ -144,6 +144,9 @@ for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) d
 end
 end)
 
+print("20")
+
+
 -- Create a new tab and section
 local BMTAB = Window:NewTab("Black Market")
 local BMSection = BMTAB:NewSection("Auto Buy Items")
@@ -157,6 +160,8 @@ local function isBlackMarketAvailable()
     local BM = workspace:FindFirstChild("BlackMarket")
     return BM and BM:FindFirstChild("Items")
 end
+
+print("21")
 
 -- Function to purchase an item
 local function buyItem(itemName)
