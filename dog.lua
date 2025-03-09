@@ -201,6 +201,36 @@ end
 end)
 end)
 
+BSection:NewButton("Auto Collect Star", "Teleports to a star and collects it", function()
+    local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
+    local WorkspaceD = workspace:GetDescendants()
+
+    for i,v in next, WorkspaceD do 
+        -- Check for Star inside Models
+        if v.Parent.Name == "Models" and v.Name == "Star" and v.Parent.Parent.Parent == workspace then
+            -- Teleport to the Star
+            HRP.CFrame = v.CFrame + Vector3.new(0, 3, 0) -- Avoids getting stuck inside
+            
+            -- Wait to make sure teleport is completed
+            wait(0.2)
+
+            -- Check if the Star has a ProximityPrompt inside it
+            for _, prompt in ipairs(v:GetDescendants()) do
+                if prompt:IsA("ProximityPrompt") then
+                    fireproximityprompt(prompt) -- Activate the prompt
+                    print("Collected a Star!")
+                    return
+                end
+            end
+
+            print("Star found but no ProximityPrompt detected!")
+            return
+        end
+    end
+
+    print("No Star found!")
+end)
+
 BSection:NewButton("Activate Telescope", "Teleports you to the telescope and activates the ProximityPrompt", function()
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
