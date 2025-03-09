@@ -257,33 +257,45 @@ end)
 
 local autoCollectStarsEnabled = false  -- Toggle state
 
+local autoCollectStarsEnabled = false
+
 BSection:NewToggle("Auto Collect Stars", "Continuously collects Stars and Blue Stars", function(state)
     autoCollectStarsEnabled = state  -- Toggle ON/OFF
 
     while autoCollectStarsEnabled do  -- Keep looping while enabled
         local Player = game.Players.LocalPlayer
-        local Character = Player.Character or Player.CharacterAdded:Wait()
-        local HRP = Character:FindFirstChild("HumanoidRootPart")
-        local foundStar = false  -- Track if any star was found
+        if not Player.Character then
+            Player.CharacterAdded:Wait() -- Wait for character if missing
+        end
+        local Character = Player.Character
+        local HRP = Character and Character:FindFirstChild("HumanoidRootPart")
 
-        for _, v in ipairs(workspace:GetChildren()) do -- Scan all top-level objects
-            if v:IsA("Model") and (v.Name == "Star" or v.Name == "BlueStar") then
-                local prompt = v:FindFirstChildWhichIsA("ProximityPrompt", true)
-                if prompt then
-                    HRP.CFrame = v:GetPivot() + Vector3.new(0, 3, 0) -- Teleport slightly above
-                    wait(0.5) -- Small delay before interaction
-                    fireproximityprompt(prompt) -- Collects the star
-                    print("Collected a " .. v.Name .. "!")
-                    foundStar = true
+        if HRP then
+            local foundStar = false  -- Track if any star was found
+            local WorkspaceD = workspace:GetDescendants() -- Search all objects
+
+            for _, v in ipairs(WorkspaceD) do 
+                if v:IsA("Model") and (v.Name == "Star" or v.Name == "BlueStar") then
+                    local prompt = v:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    if prompt then
+                        HRP.CFrame = v:GetPivot() + Vector3.new(0, 3, 0) -- Teleport slightly above
+                        wait(0.3) -- Short delay before interacting
+                        fireproximityprompt(prompt) -- Collects the star
+                        print("Collected a " .. v.Name .. "!")
+                        foundStar = true
+                        break -- Stop loop after finding one star
+                    end
                 end
             end
+
+            if not foundStar then
+                print("No Stars found! Waiting...")
+            end
+        else
+            warn("HumanoidRootPart missing!")
         end
 
-        if not foundStar then
-            print("No Stars found! Waiting...")
-        end
-
-        wait(1) -- Prevents excessive looping and keeps checking
+        wait(1) -- Prevent excessive looping
     end
 end)
 
