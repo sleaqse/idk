@@ -75,7 +75,7 @@ local Tp = true
 ASection:NewToggle("Auto OrbTP", "Teleports you to orbs automatically (portal relic)", function(State)
     Tp = State
 task.spawn(function()
-    while Tp and do
+   while Tp and wait(0.1) do
 	local MyFol
         local CombatFolder = workspace:FindFirstChild("CombatFolder")
         if CombatFolder ~= nil and CombatFolder:FindFirstChild(Player.Name) then
@@ -100,7 +100,7 @@ local Acts = true
 ASection:NewToggle("Spam All Actives", "Spams all Actives", function(State)
 Acts = State
 
-while Acts and wait(6.3) do
+while Acts and wait() do
 local args = {
 [1] = "UseItem",
 [2] = 1,
