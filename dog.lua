@@ -169,65 +169,6 @@ end
 end)
 end)
 
--- ✅ Wait until GUI is fully loaded
-repeat wait() until Main 
-
--- ✅ Check if Black Market exists in the game before running
-if not workspace:FindFirstChild("Stalls") or not workspace.Stalls:FindFirstChild("Black Market") then
-    warn("Black Market not found in workspace. BM script skipped.")
-    return
-end
-
--- ✅ Function to handle when the Black Market Dealer spawns
-local function onBlackMarketDealerAdded(dealer)
-    if string.match(dealer.Name, 'Grani') then
-        -- Remove any old Black Market section to prevent duplication
-        for _, v in pairs(game.CoreGui:GetDescendants()) do
-            if v:IsA("TextLabel") and v.Text == "Black Market Items" then
-                v.Parent.Parent:Destroy()
-            end
-        end
-
-        -- ✅ Create a new section in the GUI for Black Market Items
-        local BMitems = Main:NewSection("Black Market Items")
-        
-        -- ✅ Notify the player
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Black Market Dealer",
-            Text = "Check the Black Market Items Section in the GUI (Scroll down to bottom).",
-        })
-
-        -- ✅ Add buttons for Black Market items
-        wait(0.5)
-        for _, item in pairs(workspace.Stalls["Black Market"]:GetDescendants()) do
-            if item:IsA("NumberValue") and item.Name == "Cost" then
-                BMitems:NewButton(item.Parent.Name.."("..item.Value.."g)", "", function()
-                    local args = {
-                        [1] = "Buy1",
-                        [2] = workspace.Stalls:FindFirstChild(item.Parent.Parent.Parent.Parent.Name)
-                            :FindFirstChild(item.Parent.Parent.Parent.Name).Shop:FindFirstChild(item.Parent.Name)
-                    }
-                    game:GetService("ReplicatedStorage").Remotes.Effected:FireServer(unpack(args))
-                end)
-            end
-        end
-    end
-end
-
--- ✅ Function to remove Black Market GUI when dealer disappears
-local function onBlackMarketDealerRemoved(child)
-    if string.match(child.Name, "Grani") then -- Only remove BM UI when Grani disappears
-        for _, v in pairs(game.CoreGui:GetDescendants()) do
-            if v:IsA("TextLabel") and v.Text == "Black Market Items" then
-                v.Parent.Parent:Destroy()
-            end
-        end
-    end
-end
-
--- ✅ Connect the functions to the Black Market's events
-workspace.Stalls["Black Market"].ChildAdded:Connect(onBlackMarketDealerAdded)
-workspace.Stalls["Black Market"].ChildRemoved:Connect(onBlackMarketDealerRemoved)
 BSection:NewButton("Activate Telescope", "Teleports you to the telescope and activates the ProximityPrompt", function()
     local Player = game.Players.LocalPlayer
     local Character = Player.Character or Player.CharacterAdded:Wait()
