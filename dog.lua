@@ -145,8 +145,7 @@ end
 end)
 
 
-local BMTab = Window:NewTab("Black Market")
-local BMSection = BMTab:NewSection("Black Market Items")
+
 
 local BMTab = Window:NewTab("Black Market")
 local BMSection = BMTab:NewSection("Black Market Items")
