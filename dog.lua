@@ -148,31 +148,81 @@ end)
 local BMTab = Window:NewTab("Black Market")
 local BMSection = BMTab:NewSection("Black Market Items")
 
--- Function to check if the Black Market is available
-local function isBlackMarketAvailable()
-    local market = workspace:FindFirstChild("BlackMarket")
-    return market and market:FindFirstChild("Items")
+local BMTab = Window:NewTab("Black Market")
+local BMSection = BMTab:NewSection("Black Market Items")
+
+function BMesp()
+    local Player = game.Players.LocalPlayer
+    spawn(function()
+        while true do
+            if game:GetService("Workspace").Stalls["Black Market"]:FindFirstChild("Grani") then
+                for i, v in pairs(game:GetService("Workspace").Stalls["Black Market"]:GetDescendants()) do
+                    if v.ClassName == "Part" and v.Name == "booth" then
+                        local esp = Instance.new("BillboardGui")
+                        local esp1 = Instance.new("TextLabel")
+
+                        esp.Parent = v
+                        esp.Name = "BM"
+                        esp.AlwaysOnTop = true
+                        esp.LightInfluence = 1
+                        esp.Size = UDim2.new(0, 50, 0, 50)
+                        esp.StudsOffset = Vector3.new(0, 2, 0)
+
+                        esp1.Parent = esp
+                        esp1.BackgroundColor3 = Color3.new(1, 1, 1)
+                        esp1.BackgroundTransparency = 1
+                        esp1.Size = UDim2.new(1, 0, 1, 0)
+                        esp1.Text = "Black Market Dealer"
+                        esp1.TextColor3 = Color3.new(0, 1, 0)
+                        esp1.TextScaled = true
+
+                        wait(60)
+                        esp:Destroy()
+                    end
+                end
+            end
+            wait(0.5)
+        end
+    end)
 end
 
--- Function to buy an item
-local function buyItem(itemName)
-    local args = {
-        [1] = itemName
-    }
-    game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+BMesp()
+
+for i, v in pairs(game:GetService("Workspace").Stalls:GetDescendants()) do
+    if v:IsA("NumberValue") and v.Name == "Cost" then
+        if v.Parent.Parent.Parent.Parent.Name == "Black Market" then
+            BMSection:NewButton(v.Parent.Name .. "(" .. v.Value .. "g)", "", function()
+                local args = {
+                    [1] = "Buy1",
+                    [2] = workspace.Stalls:FindFirstChild(v.Parent.Parent.Parent.Parent.Name):FindFirstChild(v.Parent.Parent.Parent.Name).Shop:FindFirstChild(v.Parent.Name)
+                }
+                game:GetService("ReplicatedStorage").Remotes.Effected:FireServer(unpack(args))
+            end)
+        end
+    end
 end
 
--- Auto-buy loop
-spawn(function()
-    while true do
-        if isBlackMarketAvailable() then
-            local items = workspace.BlackMarket.Items:GetChildren()
-            for _, item in pairs(items) do
-                buyItem(item.Name) -- Auto-buy each item
-                wait(1) -- Small delay to prevent overload
+workspace.Stalls["Black Market"].ChildAdded:Connect(function(child)
+    if string.match(child.Name, 'Grani') then
+        for i, v in pairs(game:GetService("Workspace").Stalls["Black Market"]:GetDescendants()) do
+            if v:IsA("NumberValue") and v.Name == "Cost" then
+                BMSection:NewButton(v.Parent.Name .. "(" .. v.Value .. "g)", "", function()
+                    local args = {
+                        [1] = "Buy1",
+                        [2] = workspace.Stalls:FindFirstChild(v.Parent.Parent.Parent.Parent.Name):FindFirstChild(v.Parent.Parent.Parent.Name).Shop:FindFirstChild(v.Parent.Name)
+                    }
+                    game:GetService("ReplicatedStorage").Remotes.Effected:FireServer(unpack(args))
+                end)
             end
         end
-        wait(5) -- Check every 5 seconds
+    end
+end)
+
+workspace.Stalls["Black Market"].ChildRemoved:Connect(function(child)
+    for i, v in pairs(game.CoreGui:GetDescendants()) do
+        if v:IsA("TextLabel") and v.Text == "Black Market Items" then
+            v.Parent.Parent:Destroy()
+        end
     end
 end)
 
