@@ -201,65 +201,7 @@ end
 end)
 end)
 
-BSection:NewButton("Auto Collect Blue Star", "Teleports to a blue star and collects it", function()
-    local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
-    local WorkspaceD = workspace:GetDescendants()
 
-    for i,v in next, WorkspaceD do 
-        -- Check for BlueStar inside Models
-        if v.Parent.Name == "Models" and v.Name == "BlueStar" and v.Parent.Parent.Parent == workspace then
-            -- Teleport to the Blue Star
-            HRP.CFrame = v.CFrame + Vector3.new(0, 3, 0) -- Avoids getting stuck inside
-            
-            -- Wait to make sure teleport is completed
-            wait(0.2) 
-
-            -- Check if the BlueStar has a ProximityPrompt inside it
-            for _, prompt in ipairs(v:GetDescendants()) do
-                if prompt:IsA("ProximityPrompt") then
-                    fireproximityprompt(prompt) -- Activate the prompt
-                    print("Collected a Blue Star!")
-                    return
-                end
-            end
-
-            print("Blue Star found but no ProximityPrompt detected!")
-            return
-        end
-    end
-
-    print("No Blue Star found!")
-end)
-
-BSection:NewButton("Auto Collect Star", "Teleports to a star and collects it", function()
-    local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
-    local WorkspaceD = workspace:GetDescendants()
-
-    for i,v in next, WorkspaceD do 
-        -- Check for Star inside Models
-        if v.Parent.Name == "Models" and v.Name == "Star" and v.Parent.Parent.Parent == workspace then
-            -- Teleport to the Star
-            HRP.CFrame = v.CFrame + Vector3.new(0, 3, 0) -- Avoids getting stuck inside
-            
-            -- Wait to make sure teleport is completed
-            wait(0.2)
-
-            -- Check if the Star has a ProximityPrompt inside it
-            for _, prompt in ipairs(v:GetDescendants()) do
-                if prompt:IsA("ProximityPrompt") then
-                    fireproximityprompt(prompt) -- Activate the prompt
-                    print("Collected a Star!")
-                    return
-                end
-            end
-
-            print("Star found but no ProximityPrompt detected!")
-            return
-        end
-    end
-
-    print("No Star found!")
-end)
 
 local autoCollectStarsEnabled = false  -- Toggle state
 
@@ -319,46 +261,6 @@ BSection:NewButton("Activate Telescope", "Teleports you to the telescope and act
 end)
 
 local autoCollectStarsEnabled = false
-
-BSection:NewToggle("Auto Collect Stars, 4", "Continuously collects Stars and Blue Stars", function(state)
-    autoCollectStarsEnabled = state  -- Toggle ON/OFF
-
-    while autoCollectStarsEnabled do  -- Keep looping while enabled
-        local Player = game.Players.LocalPlayer
-        if not Player.Character then
-            Player.CharacterAdded:Wait() -- Wait for character if missing
-        end
-        local Character = Player.Character
-        local HRP = Character and Character:FindFirstChild("HumanoidRootPart")
-
-        if HRP then
-            local foundStar = false  -- Track if any star was found
-            local WorkspaceD = workspace:GetDescendants() -- Search all objects
-
-            for _, v in ipairs(WorkspaceD) do 
-                if v:IsA("Model") and (v.Name == "Star" or v.Name == "BlueStar") then
-                    local prompt = v:FindFirstChildWhichIsA("ProximityPrompt", true)
-                    if prompt then
-                        HRP.CFrame = v:GetPivot() + Vector3.new(0, 3, 0) -- Teleport slightly above
-                        wait(0.3) -- Short delay before interacting
-                        fireproximityprompt(prompt) -- Collects the star
-                        print("Collected a " .. v.Name .. "!")
-                        foundStar = true
-                        break -- Stop loop after finding one star
-                    end
-                end
-            end
-
-            if not foundStar then
-                print("No Stars found! Waiting...")
-            end
-        else
-            warn("HumanoidRootPart missing!")
-        end
-
-        wait(1) -- Prevent excessive looping
-    end
-end)
 
 local HRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
