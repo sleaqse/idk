@@ -103,7 +103,7 @@ Acts = State
 while Acts and wait() do
 local args = {
 [1] = "UseItem",
-[2] = 1,
+[2] = 2,
 [3] = { ["MouseHit"] = Vector3.new(-46,50,43)}
 }
 
@@ -119,7 +119,7 @@ game:GetService("ReplicatedStorage"):WaitForChild("Server"):FireServer(unpack(ar
 
 local args = {
 [1] = "UseItem",
-[2] = 3,
+[2] = 2,
 [3] = { ["MouseHit"] = Vector3.new(-46,50,43)}
 } 
 game:GetService("ReplicatedStorage"):WaitForChild("Server"):FireServer(unpack(args))
